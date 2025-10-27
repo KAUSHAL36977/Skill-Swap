@@ -1,6 +1,4 @@
-import { gql } from '@apollo/server'
-
-export const typeDefs = gql`
+export const typeDefs = `
   type User {
     id: ID!
     clerkId: String!
@@ -152,4 +150,4 @@ export const typeDefs = gql`
     newMessage(matchId: ID!): Message!
     listingUpdated(id: ID!): Listing!
   }
-`
+`.trim()

@@ -1,41 +1,30 @@
-import { ApolloServer } from '@apollo/server'
-import { typeDefs } from '@/lib/graphql/schema'
-import { resolvers } from '@/lib/graphql/resolvers'
 import { NextRequest } from 'next/server'
 
-const apolloServer = new ApolloServer({
-  typeDefs,
-  resolvers,
-})
+// TODO: Implement GraphQL API with proper Apollo Server integration
+// This is a placeholder that will be completed with proper API integration
 
 export async function GET(req: NextRequest) {
-  const response = await apolloServer.executeHTTPGraphQLRequest({
-    httpGraphQLRequest: {
-      method: req.method,
-      headers: req.headers,
-      body: await req.text(),
-    },
-    context: async () => ({}),
-  })
-
-  return new Response(JSON.stringify(await response.body), {
-    status: response.status || 200,
-    headers: response.headers,
-  })
+  return new Response(
+    JSON.stringify({
+      message: 'GraphQL API is under development',
+      query: 'Implement your GraphQL queries here',
+    }),
+    {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    }
+  )
 }
 
 export async function POST(req: NextRequest) {
-  const response = await apolloServer.executeHTTPGraphQLRequest({
-    httpGraphQLRequest: {
-      method: req.method,
-      headers: req.headers,
-      body: await req.text(),
-    },
-    context: async () => ({}),
-  })
-
-  return new Response(JSON.stringify(await response.body), {
-    status: response.status || 200,
-    headers: response.headers,
-  })
+  return new Response(
+    JSON.stringify({
+      message: 'GraphQL API is under development',
+      mutation: 'Implement your GraphQL mutations here',
+    }),
+    {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    }
+  )
 }

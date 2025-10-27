@@ -8,6 +8,7 @@ interface RatingDisplayProps {
   rating: Rating & {
     fromUser: { name: string }
     toUser: { name: string }
+    createdAt: Date | string
   }
 }
 

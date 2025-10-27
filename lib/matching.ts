@@ -162,8 +162,8 @@ export async function getRecommendedSkills(currentSkills: string[]) {
 
   // Filter out skills the user already has
   const availableSkills = allSkills.filter(
-    skill => !currentSkills.some(
-      current => current.toLowerCase().trim() === skill.name.toLowerCase().trim()
+    (skill: { name: string }) => !currentSkills.some(
+      (current: string) => current.toLowerCase().trim() === skill.name.toLowerCase().trim()
     )
   )
 

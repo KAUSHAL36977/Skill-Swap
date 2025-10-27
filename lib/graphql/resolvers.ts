@@ -97,7 +97,7 @@ export const resolvers = {
         },
         distinct: ['category'],
       })
-      return categories.map((c) => c.category)
+      return categories.map((c: { category: string }) => c.category)
     },
 
     popularSkills: async () => {
@@ -290,7 +290,7 @@ export const resolvers = {
       })
 
       const averageRating =
-        allRatings.reduce((sum, r) => sum + r.rating, 0) / allRatings.length
+        allRatings.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / allRatings.length
 
       await prisma.user.update({
         where: { id: rating.toUserId },
