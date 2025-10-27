@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(cuid())
+  clerkId         String    @unique
+  email           String    @unique
+  name            String
+  bio             String?
+  avatar          String?
+  portfolioUrl    String?
+  reputation      Float     @default(0.0)
+  completedSwaps  Int       @default(0)
+  skillsOffered   String[]  @default([])
+  skillsSought    String[]  @default([])
+  badges          String[]  @default([])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  listings       Listing[]
+  matchesAsUser  Match[]    @relation("UserMatches")
+  sentMessages   Message[]
+  ratingsGiven   Rating[]   @relation("GivenRatings")
+  ratingsReceived Rating[]   @relation("ReceivedRatings")
+  notifications  Notification[]
+}
+
+model Listing {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // "offer" or "request"
+  title       String
+  description String
+  skills      String[] // array of skill names
+  category    String?
+  urgency     String? // "low", "medium", "high"
+  active      Boolean  @default(true)
+  expiresAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  matches Match[]
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  listingId String
+  userId    String   // matched user ID
+  status    String   @default("pending") // "pending", "accepted", "completed", "rejected"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  listing  Listing   @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  matchedUser User    @relation("UserMatches", fields: [userId], references: [id], onDelete: Cascade)
+  messages Message[]
+  ratings  Rating[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  matchId   String
+  senderId  String
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  match    Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  sender   User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+
+model Rating {
+  id        String   @id @default(cuid())
+  matchId   String
+  fromUserId String
+  toUserId  String
+  rating    Int      // 1-5 stars
+  comment   String?
+  createdAt DateTime @default(now())
+
+  match      Match   @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  fromUser   User    @relation("GivenRatings", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUser     User    @relation("ReceivedRatings", fields: [toUserId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // "match", "message", "rating", etc.
+  title     String
+  message   String
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  category    String
+  description String?
+  tags        String[] @default([])
+  popularity  Int      @default(0)
+  createdAt   DateTime @default(now())
+}
